@@ -1,0 +1,432 @@
+<!-- CALCULADORA COMPLETA: FORMULARIO WIZARD FUNCIONAL -->
+<!-- Pegable en bloque HTML de WordPress -->
+
+<style>
+  .wizard-container {
+    max-width: 600px;
+    margin: auto;
+    font-family: 'Segoe UI', sans-serif;
+    border-radius: 16px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    background: #fff;
+  }
+
+  .wizard-header {
+    padding: 20px;
+    background: #0073aa;
+    color: white;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .wizard-step {
+    display: none;
+    padding: 20px;
+    animation: slideIn 0.4s ease-in-out forwards;
+  }
+
+  .wizard-step.active {
+    display: block;
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(30px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .wizard-buttons {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    background: #f4f4f4;
+    border-top: 1px solid #ddd;
+  }
+
+  .wizard-buttons button {
+    background: #0073aa;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+    #secuelas button {
+    background: #5b00aa;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  .wizard-buttons button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+
+  .wizard-progress {
+    height: 6px;
+    background: #eee;
+    position: relative;
+  }
+
+  .wizard-progress-bar {
+    height: 100%;
+    background: #0073aa;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  label {
+    font-weight: bold;
+    display: block;
+    margin-top: 15px;
+  }
+
+  input,
+  select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+  }
+
+  .final-message {
+    font-size: 18px;
+    text-align: left;
+    padding: 20px;
+    color: #333;
+  }
+
+  .oculto {
+    display: none;
+  }
+</style>
+
+<div class="wizard-container">
+  <div class="wizard-header">Calculadora de indemnización</div>
+  <div class="wizard-progress">
+    <div class="wizard-progress-bar" id="progress-bar"></div>
+  </div>
+
+  <form id="formWizard">
+    <!-- Paso 1 -->
+    <div class="wizard-step active">
+      <label>Fecha del accidente:</label>
+      <input type="date" id="fecha_accidente" required>
+      <label>Rango de edad:</label>
+      <select name="age_range" required>
+        <option value>Selecciona</option>
+        <option value="menos_de_10">&lt; 10</option>
+        <option value="_10_20">10-20</option>
+        <option value="_20_30">20-30</option>
+        <option value="_30_40">30-40</option>
+        <option value="_40_50">40-50</option>
+        <option value="_50_60">50-60</option>
+        <option value="_60_70">60-70</option>
+        <option value="_70_80">70-80</option>
+        <option value="_80_90">80-90</option>
+        <option value="_90_99">90-99</option>
+        <!-- <option>&gt; 60</option> -->
+      </select>
+    </div>
+
+    <!-- Paso 2 -->
+    <div class="wizard-step">
+      <label>¿Estuvo hospitalizado?</label>
+      <label><input type="radio" name="hospitalizado" value="si" required>
+        Sí</label>
+      <label><input type="radio" name="hospitalizado" value="no"> No</label>
+      <div id="campo_dias_hospital" class="oculto">
+        <label>Días hospitalizado:</label>
+        <input type="number" id="dias_hospitalizado" min="0" value="0">
+      </div>
+    </div>
+
+    <!-- Paso 3 -->
+    <div class="wizard-step">
+      <label>¿Estuvo de baja laboral?</label>
+      <label><input type="radio" name="baja" value="si" required> Sí</label>
+      <label><input type="radio" name="baja" value="no"> No</label>
+
+      <div id="campo_dias_baja" class="oculto">
+        <label>Días de baja laboral:</label>
+        <input type="number" id="dias_baja" min="0" value="0">
+      </div>
+
+      <div id="pregunta_tareas" class="oculto">
+        <label>¿Estuvo impedido de realizar tareas?</label>
+        <label><input type="radio" name="tareas" value="si"> Sí</label>
+        <label><input type="radio" name="tareas" value="no"> No</label>
+      </div>
+
+      <div id="campo_dias_tareas" class="oculto">
+        <label>Días sin poder hacer tareas:</label>
+        <input type="number" id="dias_tareas" min="0" value="0">
+      </div>
+    </div>
+
+    <!-- Paso 4 -->
+    <div class="wizard-step">
+      <label>Fecha fin de rehabilitación:</label>
+      <input type="date" id="fecha_rehabilitacion" required>
+    </div>
+
+    <!-- Paso 5 -->
+    <div class="wizard-step ">
+      <label>¿Has tenido secuelas?</label>
+      <small>Ejemplos: dolores permanentes, contracturas persistentes,
+        limitaciones físicas...</small>
+      <label><input type="radio" name="secuelas" value="si" required>
+        Sí</label>
+      <label><input type="radio" name="secuelas" value="no"> No</label>
+      <div id="secuelas" style="margin-top: 10px;" class="oculto">
+        <label style="margin-bottom: 10px;">Añade tantas secuelas como hayas
+          tenido</label>
+        <button type="button" onclick="agregarSecuela('leve')">➕ Leve (2
+          pts)</button>
+        <button type="button" onclick="agregarSecuela('moderada')">➕ Moderada (3
+          pts)</button>
+        <button type="button" onclick="agregarSecuela('grave')">➕ Grave (10
+          pts)</button>
+      </div>
+      <div id="secuela_listado" style="margin-top: 15px;"></div>
+    </div>
+
+    <!-- Resultado -->
+    <div class="wizard-step final-step">
+      <div class="final-message" id="resultado"></div>
+    </div>
+  </form>
+
+  <div class="wizard-buttons">
+    <button id="prevBtn" onclick="changeStep(-1)"
+      type="button">Anterior</button>
+    <button id="nextBtn" onclick="changeStep(1)"
+      type="button">Siguiente</button>
+  </div>
+</div>
+
+<script>
+  const steps = document.querySelectorAll(".wizard-step");
+  const progressBar = document.getElementById("progress-bar");
+  const nextBtn = document.getElementById("nextBtn");
+  const prevBtn = document.getElementById("prevBtn");
+  const indemnizaciones = {
+    menos_de_10: [1129.00, 2337.00, 3585.00, 4891.00, 6222.88, 7561.62, 8900.37, 10239.12, 11577.87, 12916.62],
+    _10_20:      [1092.00, 2251.00, 3468.00, 4731.00, 6018.94, 7313.81, 8608.69, 9903.56, 11198.43, 12493.31],
+    _20_30:      [1055.00, 2174.00, 3347.00, 4564.00, 5815.00, 7066.00, 8317.00, 9568.00, 10819.00, 12070.00],
+    _30_40:      [1015.00, 2091.57, 3220.10, 4390.96, 5594.53, 6798.09, 8001.66, 9205.23, 10408.80, 11612.37],
+    _40_50:      [970.00, 1998.84, 3077.34, 4196.28, 5346.49, 6496.70, 7646.91, 8797.12, 9947.33, 11097.54],
+    _50_60:      [911.00, 1877.26, 2890.16, 3941.05, 5021.29, 6101.54, 7181.79, 8262.04, 9342.28, 10422.53],
+    _70_80:      [843.00, 1737.14, 2674.43, 3646.87, 4619.31, 5646.10, 6645.72, 7645.33, 8644.95, 9644.56],
+    _80_90:      [818.00, 1685.62, 2595.11, 3538.72, 4482.33, 5478.66, 6448.63, 7418.60, 8388.57, 9358.54],
+    _90_99:      [770.00, 1586.71, 2442.83, 3331.07, 4244.12, 5157.18, 6070.23, 6983.28, 7896.33, 8809.38],
+  };
+  let currentStep = 0;
+  let puntosSecuelas = 0;
+  let secuelas = [];
+
+  // Mostrar campos dinámicos
+  document.querySelectorAll('input[name="hospitalizado"]').forEach(el => {
+    el.addEventListener('change', () => {
+      const visible = el.value === 'si';
+      document.getElementById('campo_dias_hospital').classList.toggle('oculto', !visible);
+      validateStep();
+    });
+  });
+
+  document.querySelectorAll('input[name="baja"]').forEach(el => {
+    el.addEventListener('change', () => {
+      const si = el.value === 'si';
+      document.getElementById('campo_dias_baja').classList.toggle('oculto', !si);
+      document.getElementById('pregunta_tareas').classList.toggle('oculto', si);
+      document.getElementById('campo_dias_tareas').classList.add('oculto');
+      validateStep();
+    });
+  });
+
+  document.querySelectorAll('input[name="tareas"]').forEach(el => {
+    el.addEventListener('change', () => {
+      document.getElementById('campo_dias_tareas').classList.toggle('oculto', el.value !== 'si');
+      validateStep();
+    });
+  });
+
+    document.querySelectorAll('input[name="secuelas"]').forEach(el => {
+    el.addEventListener('change', () => {
+      const visible = el.value === 'si';
+      document.getElementById('secuelas').classList.toggle('oculto', !visible);
+      validateStep();
+    });
+  });
+
+  // Validación de inputs de número (mayor que 0)
+  document.querySelectorAll('input[type="number"], input, select').forEach(input => {
+    input.addEventListener('input', validateStep);
+  });
+  document.querySelectorAll('input[type="radio"]').forEach(input => {
+    input.addEventListener('change', validateStep);
+  });
+ /*  function calcularIndemnizacion(edad, puntos) {
+    
+
+    let clave;
+    switch (key) {
+      case value:
+        
+        break;
+    
+      default:
+        break;
+    }
+    if (edad < 10) {
+      clave = "menos_de_10";
+    } else if (edad < 20) {
+      clave = "_10_20";
+    } else if (edad < 30) {
+      clave = "_20_30";
+    } else if (edad < 40) {
+      clave = "_30_40";
+    } else if (edad < 50) {
+      clave = "_40_50";
+    } else if (edad < 60) {
+      clave = "_50_60";
+    } else if (edad < 70) {
+      clave = "_70_80";
+    } else if (edad < 90) {
+      clave = "_80_90";
+    } else {
+      clave = "_90_99";
+    }
+
+    return indemnizaciones[clave][puntos - 1];
+  }
+   */// Añadir secuelas
+  function agregarSecuela(tipo) {
+    const puntos = tipo === 'leve' ? 2 : tipo === 'moderada' ? 3 : 10;
+    puntosSecuelas += puntos;
+    secuelas.push(tipo);
+    const div = document.createElement('div');
+    div.textContent = `Secuela ${secuelas.length}: ${tipo} (${puntos} puntos)`;
+    document.getElementById('secuela_listado').appendChild(div);
+
+    if (puntosSecuelas >= 10 || tipo === 'grave') {
+      // alert("Se han detectado secuelas graves o una puntuación total ≥ 10. Se requiere cálculo personalizado.");
+      changeStep(1);
+    }
+
+    validateStep();
+  }
+
+  // Navegación
+  function changeStep(n) {
+    if (n === 1 && !validateStep()) return;
+
+    if (n === 1 && currentStep === steps.length - 1) return;
+    if (n === 1 && currentStep === steps.length - 2) calcular();
+
+    steps[currentStep].classList.remove("active");
+    currentStep += n;
+    steps[currentStep].classList.add("active");
+    updateWizard();
+  }
+
+  function updateWizard() {
+    const totalSteps = steps.length;
+    nextBtn.style.display = currentStep === totalSteps - 1 ? "none" : "inline-block";
+    prevBtn.style.display = currentStep === 0 || currentStep === totalSteps - 1 ? "none" : "inline-block";
+    progressBar.style.width = ((currentStep) / (totalSteps - 1)) * 100 + "%";
+    validateStep();
+  }
+
+  // Validación de cada paso
+  function validateStep() {
+    const current = steps[currentStep];
+    const inputs = current.querySelectorAll("input, select");
+    let isValid = true;
+
+    inputs.forEach(input => {
+      if (input.offsetParent === null) return; // Si está oculto, lo ignoramos
+
+      // Required vacío
+      if (input.hasAttribute("required") && !input.value) {
+        isValid = false;
+      }
+
+      // Si es número visible, que sea > 0
+      if (input.type === "number") {
+        const val = parseInt(input.value);
+        if (isNaN(val) || val <= 0) {
+          isValid = false;
+        }
+      }
+
+      // Radio button: al menos uno seleccionado por grupo
+      if (input.type === "radio") {
+        const name = input.name;
+        const radios = current.querySelectorAll(`input[name="${name}"]`);
+        const algunoSeleccionado = Array.from(radios).some(r => r.checked);
+        if (!algunoSeleccionado) {
+          isValid = false;
+        }
+      }
+    });
+
+    nextBtn.disabled = !isValid;
+    return isValid;
+  }
+
+  // Cálculo final
+  function calcular() {
+    const f1 = new Date(document.getElementById('fecha_accidente').value);
+    const f2 = new Date(document.getElementById('fecha_rehabilitacion').value);
+    const diasHosp = parseInt(document.getElementById('dias_hospitalizado')?.value) || 0;
+    const diasBaja = parseInt(document.getElementById('dias_baja')?.value) || 0;
+    const diasTareas = parseInt(document.getElementById('dias_tareas')?.value) || 0;
+
+    const totalHosp = diasHosp * 95.26;
+    const totalBaja = diasBaja * 66.04;
+    const totalTareas = diasTareas * 66.04;
+
+    const diasTotal = Math.max(0, Math.ceil((f2 - f1) / (1000 * 60 * 60 * 24)));
+    const diasModerados = diasHosp + diasBaja + diasTareas;
+    const diasLeves = Math.max(0, diasTotal - diasModerados);
+    const totalLeves = diasLeves * 38.10;
+
+    const euro = v => v.toFixed(2) + " €";
+    const total = totalHosp + totalBaja + totalTareas + totalLeves;
+
+    let resultado = `<strong>Resultado estimado:</strong><br>
+Hospitalización: ${euro(totalHosp)}<br>
+Baja laboral: ${euro(totalBaja)}<br>
+Tareas limitadas: ${euro(totalTareas)}<br>
+Perjuicio leve (${diasLeves} días): ${euro(totalLeves)}<br>
+<strong>Total: ${euro(total)}</strong><br><br>`;
+
+    if (puntosSecuelas >= 10) {
+      resultado += `<strong style="color: darkred">Advertencia:</strong> Secuelas graves o ≥ 10 puntos detectadas.<br>Es necesario un cálculo personalizado. <a href="#">Contacta con nosotros</a>`;
+    } else if (puntosSecuelas > 0) {
+      resultado += `Puntuación de secuelas: ${puntosSecuelas} puntos`;
+    }
+
+    document.getElementById('resultado').innerHTML = resultado;
+  }
+
+  updateWizard();
+</script>
