@@ -127,8 +127,6 @@
   <form id="formWizard">
     <!-- Paso 1 -->
     <div class="wizard-step active">
-      <label>Fecha del accidente:</label>
-      <input type="date" id="fecha_accidente" required>
       <label>Rango de edad:</label>
       <select name="age_range" required>
         <option value>Selecciona</option>
@@ -138,12 +136,18 @@
         <option value="_30_40">30-40</option>
         <option value="_40_50">40-50</option>
         <option value="_50_60">50-60</option>
-        <option value="_60_70">60-70</option>
+        <option value="_60_0">60-70</option>
         <option value="_70_80">70-80</option>
         <option value="_80_90">80-90</option>
         <option value="_90_99">90-99</option>
-        <!-- <option>&gt; 60</option> -->
       </select>
+
+      <label>Fecha del accidente:</label>
+      <input type="date" id="fecha_accidente" required>
+
+      <label>Fecha fin de rehabilitación:</label>
+      <input type="date" id="fecha_rehabilitacion" required>
+
     </div>
 
     <!-- Paso 2 -->
@@ -156,10 +160,6 @@
         <label>Días hospitalizado:</label>
         <input type="number" id="dias_hospitalizado" min="0" value="0">
       </div>
-    </div>
-
-    <!-- Paso 3 -->
-    <div class="wizard-step">
       <label>¿Estuvo de baja laboral?</label>
       <label><input type="radio" name="baja" value="si" required> Sí</label>
       <label><input type="radio" name="baja" value="no"> No</label>
@@ -179,15 +179,10 @@
         <label>Días sin poder hacer tareas:</label>
         <input type="number" id="dias_tareas" min="0" value="0">
       </div>
+
     </div>
 
-    <!-- Paso 4 -->
-    <div class="wizard-step">
-      <label>Fecha fin de rehabilitación:</label>
-      <input type="date" id="fecha_rehabilitacion" required>
-    </div>
-
-    <!-- Paso 5 -->
+    <!-- Paso 3 -->
     <div class="wizard-step ">
       <label>¿Has tenido secuelas?</label>
       <small>Ejemplos: dolores permanentes, contracturas persistentes,
@@ -234,7 +229,7 @@
     _30_40:      [1015.00, 2091.57, 3220.10, 4390.96, 5594.53, 6798.09, 8001.66, 9205.23, 10408.80, 11612.37],
     _40_50:      [970.00, 1998.84, 3077.34, 4196.28, 5346.49, 6496.70, 7646.91, 8797.12, 9947.33, 11097.54],
     _50_60:      [911.00, 1877.26, 2890.16, 3941.05, 5021.29, 6101.54, 7181.79, 8262.04, 9342.28, 10422.53],
-    _70_80:      [843.00, 1737.14, 2674.43, 3646.87, 4619.31, 5646.10, 6645.72, 7645.33, 8644.95, 9644.56],
+    // _60_70:      [911.00, 1877.26, 2890.16, 3941.05, 5021.29, 6101.54, 7181.79, 8262.04, 9342.28, 10422.53],    _70_80:      [843.00, 1737.14, 2674.43, 3646.87, 4619.31, 5646.10, 6645.72, 7645.33, 8644.95, 9644.56],
     _80_90:      [818.00, 1685.62, 2595.11, 3538.72, 4482.33, 5478.66, 6448.63, 7418.60, 8388.57, 9358.54],
     _90_99:      [770.00, 1586.71, 2442.83, 3331.07, 4244.12, 5157.18, 6070.23, 6983.28, 7896.33, 8809.38],
   };
@@ -394,39 +389,64 @@
 
   // Cálculo final
   function calcular() {
-    const f1 = new Date(document.getElementById('fecha_accidente').value);
-    const f2 = new Date(document.getElementById('fecha_rehabilitacion').value);
-    const diasHosp = parseInt(document.getElementById('dias_hospitalizado')?.value) || 0;
-    const diasBaja = parseInt(document.getElementById('dias_baja')?.value) || 0;
-    const diasTareas = parseInt(document.getElementById('dias_tareas')?.value) || 0;
+  const f1 = new Date(document.getElementById('fecha_accidente').value);
+  const f2 = new Date(document.getElementById('fecha_rehabilitacion').value);
+  const diasHosp = parseInt(document.getElementById('dias_hospitalizado')?.value) || 0;
+  const diasBaja = parseInt(document.getElementById('dias_baja')?.value) || 0;
+  const diasTareas = parseInt(document.getElementById('dias_tareas')?.value) || 0;
 
-    const totalHosp = diasHosp * 95.26;
-    const totalBaja = diasBaja * 66.04;
-    const totalTareas = diasTareas * 66.04;
+  const totalHosp = diasHosp * 95.26;
+  const totalBaja = diasBaja * 66.04;
+  const totalTareas = diasTareas * 66.04;
 
-    const diasTotal = Math.max(0, Math.ceil((f2 - f1) / (1000 * 60 * 60 * 24)));
-    const diasModerados = diasHosp + diasBaja + diasTareas;
-    const diasLeves = Math.max(0, diasTotal - diasModerados);
-    const totalLeves = diasLeves * 38.10;
+  const diasTotal = Math.max(0, Math.ceil((f2 - f1) / (1000 * 60 * 60 * 24)));
+  const diasModerados = diasHosp + diasBaja + diasTareas;
+  const diasLeves = Math.max(0, diasTotal - diasModerados);
+  const totalLeves = diasLeves * 38.10;
 
-    const euro = v => v.toFixed(2) + " €";
-    const total = totalHosp + totalBaja + totalTareas + totalLeves;
+  const euro = v => v.toFixed(2) + " €";
+  let total = totalHosp + totalBaja + totalTareas + totalLeves;
 
-    let resultado = `<strong>Resultado estimado:</strong><br>
-Hospitalización: ${euro(totalHosp)}<br>
-Baja laboral: ${euro(totalBaja)}<br>
-Tareas limitadas: ${euro(totalTareas)}<br>
-Perjuicio leve (${diasLeves} días): ${euro(totalLeves)}<br>
-<strong>Total: ${euro(total)}</strong><br><br>`;
+  let resultado = "";
 
-    if (puntosSecuelas >= 10) {
-      resultado += `<strong style="color: darkred">Advertencia:</strong> Secuelas graves o ≥ 10 puntos detectadas.<br>Es necesario un cálculo personalizado. <a href="#">Contacta con nosotros</a>`;
-    } else if (puntosSecuelas > 0) {
-      resultado += `Puntuación de secuelas: ${puntosSecuelas} puntos`;
-    }
+  if (puntosSecuelas >= 10) {
+  resultado = `
+    <h2 style="color: darkred">⚠️ Atención: Secuelas graves detectadas</h2>
+    <p>Hemos detectado que tus secuelas alcanzan o superan los 10 puntos, lo que implica una situación más compleja.</p>
+    <p><strong>Para confirmar y obtener tu indemnización real, es necesario realizar un cálculo personalizado.</strong></p>
+    <p style="font-size: 18px; margin-top: 10px;"><a href="#" style="color: #0073aa; text-decoration: underline;">👉 Haz clic aquí para contactar con nuestro equipo especializado</a></p>
+    <p style="font-size: 12px; color: #666; margin-top: 30px;">
+      * Esta calculadora ofrece una estimación. La valoración final dependerá de la documentación médica y otros factores.
+    </p>
+  `;
+} else {
+  const rangoEdad = document.querySelector('select[name="age_range"]').value;
+  if (rangoEdad && indemnizaciones[rangoEdad]) {
+    const compensacionSecuelas = indemnizaciones[rangoEdad][puntosSecuelas - 1] || 0;
+    total += compensacionSecuelas;
 
-    document.getElementById('resultado').innerHTML = resultado;
+    resultado = `
+      <h1><strong>Total estimado: ${euro(total)}</strong></h1><br>
+      <ul>
+        <li>Hospitalización: ${euro(totalHosp)}</li>
+        <li>Baja laboral: ${euro(totalBaja)}</li>
+        <li>Tareas limitadas: ${euro(totalTareas)}</li>
+        <li>Perjuicio leve (${diasLeves} días): ${euro(totalLeves)}</li>
+        <li>Compensación por secuelas (${puntosSecuelas} puntos): ${euro(compensacionSecuelas)}</li>
+      </ul>
+      <p style="font-size: 12px; color: #666; margin-top: 30px;">
+        * Esta es una estimación orientativa basada en los datos introducidos. El resultado final podría variar tras el análisis detallado de su caso.
+      </p>
+    `;
+  } else {
+    resultado = `<p style="color: red">⚠️ Error: No se pudo calcular la compensación por secuelas. Asegúrate de haber seleccionado correctamente tu rango de edad.</p>`;
   }
+}
+
+
+  document.getElementById('resultado').innerHTML = resultado;
+}
+
 
   updateWizard();
 </script>
