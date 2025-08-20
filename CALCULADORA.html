@@ -2,115 +2,167 @@
 <!-- Pegable en bloque HTML de WordPress -->
 
 <style>
+  :root {
+    --color-primary: #f97316;
+    --color-primary-hover: #cc5500;
+    --color-white: #ffffff;
+    --color-gray: #666;
+    --font-main: 'Roboto', sans-serif;
+    --radius: 8px;
+    --button-radius: 16px;
+  }
+
   .wizard-container {
     max-width: 600px;
     margin: auto;
-    font-family: 'Segoe UI', sans-serif;
-    border-radius: 16px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
-    overflow: hidden;
-    background: #fff;
+    font-family: var(--font-main);
+    background-color: var(--color-white);
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   }
 
   .wizard-header {
-    padding: 20px;
-    background: #0073aa;
-    color: white;
-    text-align: center;
-    font-size: 20px;
-    font-weight: bold;
+    font-size: 45px;
+    font-weight: normal;
+    padding: 24px 24px 0;
+    text-align: left;
+    color: #333;
+  }
+
+  .wizard-progress {
+    height: 6px;
+    background-color: #eee;
+    margin: 0 24px;
+  }
+
+  .wizard-progress-bar {
+    height: 100%;
+    background-color: var(--color-primary);
+    width: 0%;
+    transition: width 0.3s ease;
   }
 
   .wizard-step {
     display: none;
-    padding: 20px;
-    animation: slideIn 0.4s ease-in-out forwards;
+    padding: 24px;
+    animation: fadeInSlide 0.4s ease-in-out forwards;
   }
 
   .wizard-step.active {
     display: block;
   }
 
-  @keyframes slideIn {
+  @keyframes fadeInSlide {
     from {
       opacity: 0;
-      transform: translateX(30px);
+      transform: translateX(20px);
     }
-
     to {
       opacity: 1;
       transform: translateX(0);
     }
   }
 
+  label {
+    font-size: 15px;
+    font-weight: 900;
+    margin-top: 20px;
+    display: block;
+    color: #333;
+  }
+
+  small {
+    font-size: 14px;
+    color: var(--color-gray);
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  select {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 16px;
+    font-weight: normal;
+    font-family: var(--font-main);
+    border: 1px solid #ccc;
+    border-radius: var(--radius);
+    background-color: #fff;
+    box-sizing: border-box;
+    margin-top: 6px;
+  }
+
+  input[type="radio"] {
+    margin-right: 6px;
+    accent-color: var(--color-primary);
+  }
+
   .wizard-buttons {
     display: flex;
     justify-content: space-between;
-    padding: 20px;
-    background: #f4f4f4;
+    padding: 24px;
+    background: #f9f9f9;
     border-top: 1px solid #ddd;
   }
 
   .wizard-buttons button {
-    background: #0073aa;
+    background-color: var(--color-primary);
+    color: var(--color-white);
     border: none;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-size: 16px;
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: var(--button-radius);
     cursor: pointer;
-    transition: 0.2s;
+    transition: background-color 0.3s ease;
+    font-family: var(--font-main);
   }
-    #secuelas button {
-    background: #5b00aa;
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: 0.2s;
+
+  .wizard-buttons button:hover {
+    background-color: var(--color-primary-hover);
   }
 
   .wizard-buttons button:disabled {
-    background: #ccc;
+    background-color: #ccc;
+    color: #fff;
     cursor: not-allowed;
   }
 
-  .wizard-progress {
-    height: 6px;
-    background: #eee;
-    position: relative;
+  #secuelas button {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border: none;
+    border-radius: var(--button-radius);
+    margin: 6px 6px 0 0;
+    cursor: pointer;
+    transition: background 0.3s ease;
   }
 
-  .wizard-progress-bar {
-    height: 100%;
-    background: #0073aa;
-    width: 0%;
-    transition: width 0.3s ease;
+  #secuelas button:hover {
+    background-color: var(--color-primary-hover);
   }
 
-  label {
-    font-weight: bold;
-    display: block;
-    margin-top: 15px;
-  }
-
-  input,
-  select {
-    width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
+  #secuela_listado div {
+    background: #f4f4f4;
+    border-left: 4px solid var(--color-primary);
+    padding: 8px 12px;
+    margin-top: 6px;
+    border-radius: 4px;
+    font-size: 14px;
   }
 
   .final-message {
     font-size: 18px;
-    text-align: left;
-    padding: 20px;
+    padding: 24px;
     color: #333;
+    line-height: 1.5;
   }
 
   .oculto {
@@ -127,20 +179,8 @@
   <form id="formWizard">
     <!-- Paso 1 -->
     <div class="wizard-step active">
-      <label>Rango de edad:</label>
-      <select name="age_range" required>
-        <option value>Selecciona</option>
-        <option value="menos_de_10">&lt; 10</option>
-        <option value="_10_20">10-20</option>
-        <option value="_20_30">20-30</option>
-        <option value="_30_40">30-40</option>
-        <option value="_40_50">40-50</option>
-        <option value="_50_60">50-60</option>
-        <option value="_60_0">60-70</option>
-        <option value="_70_80">70-80</option>
-        <option value="_80_90">80-90</option>
-        <option value="_90_99">90-99</option>
-      </select>
+      <label>Edad:</label>
+      <input type="number" name="age" min="1" max="99" required>
 
       <label>Fecha del accidente:</label>
       <input type="date" id="fecha_accidente" required>
@@ -193,12 +233,11 @@
       <div id="secuelas" style="margin-top: 10px;" class="oculto">
         <label style="margin-bottom: 10px;">Añade tantas secuelas como hayas
           tenido</label>
-        <button type="button" onclick="agregarSecuela('leve')">➕ Leve (2
-          pts)</button>
-        <button type="button" onclick="agregarSecuela('moderada')">➕ Moderada (3
-          pts)</button>
-        <button type="button" onclick="agregarSecuela('grave')">➕ Grave (10
-          pts)</button>
+        <button type="button" onclick="agregarSecuela('leve')">➕ Leve </button>
+        <button type="button" onclick="agregarSecuela('moderada')">➕ Moderada
+        </button>
+        <button type="button" onclick="agregarSecuela('grave')">➕ Grave
+        </button>
       </div>
       <div id="secuela_listado" style="margin-top: 15px;"></div>
     </div>
@@ -229,13 +268,26 @@
     _30_40:      [1015.00, 2091.57, 3220.10, 4390.96, 5594.53, 6798.09, 8001.66, 9205.23, 10408.80, 11612.37],
     _40_50:      [970.00, 1998.84, 3077.34, 4196.28, 5346.49, 6496.70, 7646.91, 8797.12, 9947.33, 11097.54],
     _50_60:      [911.00, 1877.26, 2890.16, 3941.05, 5021.29, 6101.54, 7181.79, 8262.04, 9342.28, 10422.53],
-    // _60_70:      [911.00, 1877.26, 2890.16, 3941.05, 5021.29, 6101.54, 7181.79, 8262.04, 9342.28, 10422.53],    _70_80:      [843.00, 1737.14, 2674.43, 3646.87, 4619.31, 5646.10, 6645.72, 7645.33, 8644.95, 9644.56],
+    _60_70:      [875.00, 1803.08, 2775.95, 3785.31, 5021.29, 6101.54, 7181.79, 8262.04, 9342.28, 10422.53],    
+    _70_80:      [843.00, 1737.14, 2674.43, 3646.87, 4619.31, 5646.10, 6645.72, 7645.33, 8644.95, 9644.56],
     _80_90:      [818.00, 1685.62, 2595.11, 3538.72, 4482.33, 5478.66, 6448.63, 7418.60, 8388.57, 9358.54],
     _90_99:      [770.00, 1586.71, 2442.83, 3331.07, 4244.12, 5157.18, 6070.23, 6983.28, 7896.33, 8809.38],
   };
   let currentStep = 0;
   let puntosSecuelas = 0;
   let secuelas = [];
+  function obtenerRangoEdad(edad) {
+    if (edad < 10) return "menos_de_10";
+    if (edad < 20) return "_10_20";
+    if (edad < 30) return "_20_30";
+    if (edad < 40) return "_30_40";
+    if (edad < 50) return "_40_50";
+    if (edad < 60) return "_50_60";
+    if (edad < 70) return "_60_70";
+    if (edad < 80) return "_70_80";
+    if (edad < 90) return "_80_90";
+    return "_90_99";
+  }
 
   // Mostrar campos dinámicos
   document.querySelectorAll('input[name="hospitalizado"]').forEach(el => {
@@ -278,47 +330,13 @@
   document.querySelectorAll('input[type="radio"]').forEach(input => {
     input.addEventListener('change', validateStep);
   });
- /*  function calcularIndemnizacion(edad, puntos) {
-    
-
-    let clave;
-    switch (key) {
-      case value:
-        
-        break;
-    
-      default:
-        break;
-    }
-    if (edad < 10) {
-      clave = "menos_de_10";
-    } else if (edad < 20) {
-      clave = "_10_20";
-    } else if (edad < 30) {
-      clave = "_20_30";
-    } else if (edad < 40) {
-      clave = "_30_40";
-    } else if (edad < 50) {
-      clave = "_40_50";
-    } else if (edad < 60) {
-      clave = "_50_60";
-    } else if (edad < 70) {
-      clave = "_70_80";
-    } else if (edad < 90) {
-      clave = "_80_90";
-    } else {
-      clave = "_90_99";
-    }
-
-    return indemnizaciones[clave][puntos - 1];
-  }
-   */// Añadir secuelas
+  // Añadir secuelas
   function agregarSecuela(tipo) {
     const puntos = tipo === 'leve' ? 2 : tipo === 'moderada' ? 3 : 10;
     puntosSecuelas += puntos;
     secuelas.push(tipo);
     const div = document.createElement('div');
-    div.textContent = `Secuela ${secuelas.length}: ${tipo} (${puntos} puntos)`;
+    div.textContent = `Secuela ${secuelas.length}: ${tipo}`;
     document.getElementById('secuela_listado').appendChild(div);
 
     if (puntosSecuelas >= 10 || tipo === 'grave') {
@@ -412,30 +430,31 @@
   if (puntosSecuelas >= 10) {
   resultado = `
     <h2 style="color: darkred">⚠️ Atención: Secuelas graves detectadas</h2>
-    <p>Hemos detectado que tus secuelas alcanzan o superan los 10 puntos, lo que implica una situación más compleja.</p>
-    <p><strong>Para confirmar y obtener tu indemnización real, es necesario realizar un cálculo personalizado.</strong></p>
+    <p>Hemos identificado que tus secuelas podrían ser significativas, lo que indica una situación más compleja.</p>
+    <p><strong>Para confirmar y conocer el monto real de tu indemnización, es necesario realizar un cálculo personalizado.</strong></p>
     <p style="font-size: 18px; margin-top: 10px;"><a href="#" style="color: #0073aa; text-decoration: underline;">👉 Haz clic aquí para contactar con nuestro equipo especializado</a></p>
     <p style="font-size: 12px; color: #666; margin-top: 30px;">
-      * Esta calculadora ofrece una estimación. La valoración final dependerá de la documentación médica y otros factores.
+      *Estimación orientativa basada en los datos introducidos. El resultado podría variar tras el estudio del caso por parte de uno de nuestros profesionales.
     </p>
   `;
 } else {
-  const rangoEdad = document.querySelector('select[name="age_range"]').value;
+  const edad = parseInt(document.querySelector('input[name="age"]').value, 10);
+  const rangoEdad = obtenerRangoEdad(edad);
   if (rangoEdad && indemnizaciones[rangoEdad]) {
     const compensacionSecuelas = indemnizaciones[rangoEdad][puntosSecuelas - 1] || 0;
     total += compensacionSecuelas;
-
+    
+    // <li>Tareas limitadas: ${euro(totalTareas)}</li>
+    //<li>Perjuicio leve (${diasLeves} días): ${euro(totalLeves)}</li>
+    // <li>Hospitalización: ${euro(totalHosp)}</li>
     resultado = `
       <h1><strong>Total estimado: ${euro(total)}</strong></h1><br>
       <ul>
-        <li>Hospitalización: ${euro(totalHosp)}</li>
-        <li>Baja laboral: ${euro(totalBaja)}</li>
-        <li>Tareas limitadas: ${euro(totalTareas)}</li>
-        <li>Perjuicio leve (${diasLeves} días): ${euro(totalLeves)}</li>
-        <li>Compensación por secuelas (${puntosSecuelas} puntos): ${euro(compensacionSecuelas)}</li>
+        <li>Dias de recuperacion lesional: ${euro(totalBaja+totalTareas)}</li>
+        <li>Compensación por secuelas: ${euro(compensacionSecuelas)}</li>
       </ul>
       <p style="font-size: 12px; color: #666; margin-top: 30px;">
-        * Esta es una estimación orientativa basada en los datos introducidos. El resultado final podría variar tras el análisis detallado de su caso.
+        *Estimación orientativa basada en los datos introducidos. El resultado podría variar tras el estudio del caso por parte de uno de nuestros profesionales
       </p>
     `;
   } else {
