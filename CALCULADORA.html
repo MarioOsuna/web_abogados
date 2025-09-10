@@ -249,12 +249,18 @@
   </form>
 
   <div class="wizard-buttons">
-    <button id="prevBtn" onclick="changeStep(-1)" type="button">Anterior</button>
-    <button id="nextBtn" onclick="changeStep(1)" type="button">Siguiente</button>
+    <button id="prevBtn" onclick="changeStep(-1)"
+      type="button">Anterior</button>
+    <button id="nextBtn" onclick="changeStep(1)"
+      type="button">Siguiente</button>
   </div>
 </div>
 
 <script>
+
+  const precioHosp = 95.26;
+  const precioBaja = 66.04;
+  const precioLeve = 38.10;
   const steps = document.querySelectorAll(".wizard-step");
   const progressBar = document.getElementById("progress-bar");
   const nextBtn = document.getElementById("nextBtn");
@@ -427,7 +433,7 @@
       return;
     }
 
-    const diasTotal = Math.max(0, Math.ceil((f2 - f1) / (1000 * 60 * 60 * 24)));
+    const diasTotal = Math.max(0, Math.ceil((f2 - f1) / (1000 * 60 * 60 * 24))+1);
     const diasHosp = parseInt(document.getElementById('dias_hospitalizado')?.value) || 0;
     const diasBaja = parseInt(document.getElementById('dias_baja')?.value) || 0;
     const diasTareas = parseInt(document.getElementById('dias_tareas')?.value) || 0;
@@ -438,12 +444,12 @@
       return;
     }
 
-    const totalHosp = diasHosp * 95.26;
-    const totalBaja = diasBaja * 66.04;
-    const totalTareas = diasTareas * 66.04;
+    const totalHosp = diasHosp * precioHosp ;
+    const totalBaja = diasBaja * precioBaja ;
+    const totalTareas = diasTareas * precioBaja ;
     const diasModerados = diasHosp + diasBaja + diasTareas;
     const diasLeves = Math.max(0, diasTotal - diasModerados);
-    const totalLeves = diasLeves * 38.10;
+    const totalLeves = diasLeves * precioLeve;
     const euro = v => v.toFixed(2) + " €";
     let total = totalHosp + totalBaja + totalTareas + totalLeves;
 
