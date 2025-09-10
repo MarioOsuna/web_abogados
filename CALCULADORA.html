@@ -188,7 +188,6 @@
 
       <label>Fecha fin de rehabilitación:</label>
       <input type="date" id="fecha_rehabilitacion" required>
-
     </div>
 
     <!-- Paso 2 -->
@@ -250,10 +249,8 @@
   </form>
 
   <div class="wizard-buttons">
-    <button id="prevBtn" onclick="changeStep(-1)"
-      type="button">Anterior</button>
-    <button id="nextBtn" onclick="changeStep(1)"
-      type="button">Siguiente</button>
+    <button id="prevBtn" onclick="changeStep(-1)" type="button">Anterior</button>
+    <button id="nextBtn" onclick="changeStep(1)" type="button">Siguiente</button>
   </div>
 </div>
 
@@ -277,6 +274,7 @@
   let currentStep = 0;
   let puntosSecuelas = 0;
   let secuelas = [];
+
   function obtenerRangoEdad(edad) {
     if (edad < 10) return "menos_de_10";
     if (edad < 20) return "_10_20";
@@ -316,7 +314,7 @@
     });
   });
 
-    document.querySelectorAll('input[name="secuelas"]').forEach(el => {
+  document.querySelectorAll('input[name="secuelas"]').forEach(el => {
     el.addEventListener('change', () => {
       const visible = el.value === 'si';
       document.getElementById('secuelas').classList.toggle('oculto', !visible);
@@ -324,13 +322,14 @@
     });
   });
 
-  // Validación de inputs de número (mayor que 0)
+  // Validación de inputs de número y select
   document.querySelectorAll('input[type="number"], input, select').forEach(input => {
     input.addEventListener('input', validateStep);
   });
   document.querySelectorAll('input[type="radio"]').forEach(input => {
     input.addEventListener('change', validateStep);
   });
+
   // Añadir secuelas
   function agregarSecuela(tipo) {
     const puntos = tipo === 'leve' ? 2 : tipo === 'moderada' ? 3 : 10;
@@ -341,10 +340,8 @@
     document.getElementById('secuela_listado').appendChild(div);
 
     if (puntosSecuelas >= 10 || tipo === 'grave') {
-      // alert("Se han detectado secuelas graves o una puntuación total ≥ 10. Se requiere cálculo personalizado.");
       changeStep(1);
     }
-
     validateStep();
   }
 
@@ -376,22 +373,19 @@
     let isValid = true;
 
     inputs.forEach(input => {
-      if (input.offsetParent === null) return; // Si está oculto, lo ignoramos
+      if (input.offsetParent === null) return;
 
-      // Required vacío
       if (input.hasAttribute("required") && !input.value) {
         isValid = false;
       }
 
-      // Si es número visible, que sea > 0
       if (input.type === "number") {
         const val = parseInt(input.value);
-        if (isNaN(val) || val <= 0) {
+        if (isNaN(val) || val < 0) {
           isValid = false;
         }
       }
 
-      // Radio button: al menos uno seleccionado por grupo
       if (input.type === "radio") {
         const name = input.name;
         const radios = current.querySelectorAll(`input[name="${name}"]`);
@@ -402,68 +396,89 @@
       }
     });
 
+    // Validación adicional: fechas y días
+    const fechaAccidente = new Date(document.getElementById('fecha_accidente')?.value);
+    const fechaRehab = new Date(document.getElementById('fecha_rehabilitacion')?.value);
+    if (fechaAccidente && fechaRehab && fechaRehab < fechaAccidente) {
+      isValid = false;
+    }
+
+    const diasTotales = Math.max(0, Math.ceil((fechaRehab - fechaAccidente) / (1000 * 60 * 60 * 24)));
+    const diasHosp = parseInt(document.getElementById('dias_hospitalizado')?.value) || 0;
+    const diasBaja = parseInt(document.getElementById('dias_baja')?.value) || 0;
+    const diasTareas = parseInt(document.getElementById('dias_tareas')?.value) || 0;
+
+    if (diasHosp + diasBaja + diasTareas > diasTotales) {
+      isValid = false;
+    }
+
     nextBtn.disabled = !isValid;
     return isValid;
   }
 
   // Cálculo final
   function calcular() {
-  const f1 = new Date(document.getElementById('fecha_accidente').value);
-  const f2 = new Date(document.getElementById('fecha_rehabilitacion').value);
-  const diasHosp = parseInt(document.getElementById('dias_hospitalizado')?.value) || 0;
-  const diasBaja = parseInt(document.getElementById('dias_baja')?.value) || 0;
-  const diasTareas = parseInt(document.getElementById('dias_tareas')?.value) || 0;
+    const f1 = new Date(document.getElementById('fecha_accidente').value);
+    const f2 = new Date(document.getElementById('fecha_rehabilitacion').value);
 
-  const totalHosp = diasHosp * 95.26;
-  const totalBaja = diasBaja * 66.04;
-  const totalTareas = diasTareas * 66.04;
+    if(f2 < f1) {
+      alert("❌ La fecha de rehabilitación no puede ser anterior a la fecha del accidente.");
+      changeStep(-1);
+      return;
+    }
 
-  const diasTotal = Math.max(0, Math.ceil((f2 - f1) / (1000 * 60 * 60 * 24)));
-  const diasModerados = diasHosp + diasBaja + diasTareas;
-  const diasLeves = Math.max(0, diasTotal - diasModerados);
-  const totalLeves = diasLeves * 38.10;
+    const diasTotal = Math.max(0, Math.ceil((f2 - f1) / (1000 * 60 * 60 * 24)));
+    const diasHosp = parseInt(document.getElementById('dias_hospitalizado')?.value) || 0;
+    const diasBaja = parseInt(document.getElementById('dias_baja')?.value) || 0;
+    const diasTareas = parseInt(document.getElementById('dias_tareas')?.value) || 0;
 
-  const euro = v => v.toFixed(2) + " €";
-  let total = totalHosp + totalBaja + totalTareas + totalLeves;
+    if(diasHosp + diasBaja + diasTareas > diasTotal){
+      alert("❌ La suma de días de hospitalización, baja y tareas no puede superar el total de días entre accidente y rehabilitación.");
+      changeStep(1);
+      return;
+    }
 
-  let resultado = "";
+    const totalHosp = diasHosp * 95.26;
+    const totalBaja = diasBaja * 66.04;
+    const totalTareas = diasTareas * 66.04;
+    const diasModerados = diasHosp + diasBaja + diasTareas;
+    const diasLeves = Math.max(0, diasTotal - diasModerados);
+    const totalLeves = diasLeves * 38.10;
+    const euro = v => v.toFixed(2) + " €";
+    let total = totalHosp + totalBaja + totalTareas + totalLeves;
 
-  if (puntosSecuelas >= 10) {
-  resultado = `
-    <h2 style="color: darkred">⚠️ Atención: Secuelas graves detectadas</h2>
-    <p>Hemos identificado que tus secuelas podrían ser significativas, lo que indica una situación más compleja.</p>
-    <p><strong>Para confirmar y conocer el monto real de tu indemnización, es necesario realizar un cálculo personalizado.</strong></p>
-    <p style="font-size: 18px; margin-top: 10px;"><a href="#" style="color: #0073aa; text-decoration: underline;">👉 Haz clic aquí para contactar con nuestro equipo especializado</a></p>
-    <p style="font-size: 12px; color: #666; margin-top: 30px;">
-      *Estimación orientativa basada en los datos introducidos. El resultado podría variar tras el estudio del caso por parte de uno de nuestros profesionales.
-    </p>
-  `;
-} else {
-  const edad = parseInt(document.querySelector('input[name="age"]').value, 10);
-  const rangoEdad = obtenerRangoEdad(edad);
-  if (rangoEdad && indemnizaciones[rangoEdad]) {
-    const compensacionSecuelas = indemnizaciones[rangoEdad][puntosSecuelas - 1] || 0;
-    total += compensacionSecuelas;
-    
-    // <li>Tareas limitadas: ${euro(totalTareas)}</li>
-    //<li>Perjuicio leve (${diasLeves} días): ${euro(totalLeves)}</li>
-    // <li>Hospitalización: ${euro(totalHosp)}</li>
-    resultado = `
-      <h2 style="margin-bottom:0">Total estimado:</h2>
-      <h1 style="margin-top:0">${euro(total)}</h1><br>     
-      <p style="font-size: 12px; color: #666; margin-top: 30px;">
-        *Estimación orientativa basada en los datos introducidos. El resultado podría variar tras el estudio del caso por parte de uno de nuestros profesionales
-      </p>
-    `;
-  } else {
-    resultado = `<p style="color: red">⚠️ Error: No se pudo calcular la compensación por secuelas. Asegúrate de haber seleccionado correctamente tu rango de edad.</p>`;
+    let resultado = "";
+
+    if (puntosSecuelas >= 10) {
+      resultado = `
+        <h2 style="color: darkred">⚠️ Atención: Secuelas graves detectadas</h2>
+        <p>Hemos identificado que tus secuelas podrían ser significativas, lo que indica una situación más compleja.</p>
+        <p><strong>Para confirmar y conocer el monto real de tu indemnización, es necesario realizar un cálculo personalizado.</strong></p>
+        <p style="font-size: 18px; margin-top: 10px;"><a href="#" style="color: #0073aa; text-decoration: underline;">👉 Haz clic aquí para contactar con nuestro equipo especializado</a></p>
+        <p style="font-size: 12px; color: #666; margin-top: 30px;">
+          *Estimación orientativa basada en los datos introducidos. El resultado podría variar tras el estudio del caso por parte de uno de nuestros profesionales.
+        </p>
+      `;
+    } else {
+      const edad = parseInt(document.querySelector('input[name="age"]').value, 10);
+      const rangoEdad = obtenerRangoEdad(edad);
+      if (rangoEdad && indemnizaciones[rangoEdad]) {
+        const compensacionSecuelas = indemnizaciones[rangoEdad][puntosSecuelas - 1] || 0;
+        total += compensacionSecuelas;
+        resultado = `
+          <h2 style="margin-bottom:0">Total estimado:</h2>
+          <h1 style="margin-top:0">${euro(total)}</h1><br>     
+          <p style="font-size: 12px; color: #666; margin-top: 30px;">
+            *Estimación orientativa basada en los datos introducidos. El resultado podría variar tras el estudio del caso por parte de uno de nuestros profesionales
+          </p>
+        `;
+      } else {
+        resultado = `<p style="color: red">⚠️ Error: No se pudo calcular la compensación por secuelas. Asegúrate de haber seleccionado correctamente tu rango de edad.</p>`;
+      }
+    }
+
+    document.getElementById('resultado').innerHTML = resultado;
   }
-}
-
-
-  document.getElementById('resultado').innerHTML = resultado;
-}
-
 
   updateWizard();
 </script>
