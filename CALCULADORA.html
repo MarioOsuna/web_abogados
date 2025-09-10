@@ -162,6 +162,7 @@
     font-size: 18px;
     padding: 24px;
     color: #333;
+    place-items: center;
     line-height: 1.5;
   }
 
@@ -448,11 +449,8 @@
     //<li>Perjuicio leve (${diasLeves} días): ${euro(totalLeves)}</li>
     // <li>Hospitalización: ${euro(totalHosp)}</li>
     resultado = `
-      <h1><strong>Total estimado: ${euro(total)}</strong></h1><br>
-      <ul>
-        <li>Dias de recuperacion lesional: ${euro(totalBaja+totalTareas)}</li>
-        <li>Compensación por secuelas: ${euro(compensacionSecuelas)}</li>
-      </ul>
+      <h2 style="margin-bottom:0">Total estimado:</h2>
+      <h1 style="margin-top:0">${euro(total)}</h1><br>     
       <p style="font-size: 12px; color: #666; margin-top: 30px;">
         *Estimación orientativa basada en los datos introducidos. El resultado podría variar tras el estudio del caso por parte de uno de nuestros profesionales
       </p>
