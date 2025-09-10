@@ -184,10 +184,10 @@
       <input type="number" name="age" min="1" max="99" required>
 
       <label>Fecha del accidente:</label>
-      <input type="date" id="fecha_accidente" required>
+      <input type="date" id="fecha_accidente" required max="">
 
       <label>Fecha fin de rehabilitación:</label>
-      <input type="date" id="fecha_rehabilitacion" required>
+      <input type="date" id="fecha_rehabilitacion" required max="">
     </div>
 
     <!-- Paso 2 -->
@@ -485,6 +485,10 @@
 
     document.getElementById('resultado').innerHTML = resultado;
   }
-
+  // Establecer fecha máxima del accidente como hoy
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('fecha_accidente').setAttribute('max', today);
+  document.getElementById('fecha_rehabilitacion').setAttribute('max', today);
+  
   updateWizard();
 </script>
