@@ -4,8 +4,6 @@
 <style>
   :root {
     --color-primary: #f97316;
-    --danger: #7f0000;
-    --color-secondary: #25af13;
     --color-primary-hover: #cc5500;
     --color-white: #ffffff;
     --color-gray: #666;
@@ -26,13 +24,11 @@
   }
 
   .wizard-header {
-    font-size: 40px;
+    font-size: 38px;
     font-weight: normal;
     padding: 24px 24px 0;
     text-align: left;
-    color: #1d2e52
-;
-
+    color: #333;
   }
 
   .wizard-progress {
@@ -105,41 +101,12 @@
     accent-color: var(--color-primary);
   }
 
-  .reload-buttons{
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-  }
-  .reload-buttons button{
-      background-color: var(--color-secondary);
-      color: var(--color-white);
-      
-  }
-  button{
-      border: none;
-      padding: 10px 24px;
-      font-size: 14px;
-      font-weight: 500;
-      border-radius: var(--button-radius);
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      font-family: var(--font-main);
-  }
-
-
-   .wizard-buttons button {
-    background-color: var(--color-primary);
-    color: var(--color-white);
-    border: none;
-  }
-
   .wizard-buttons {
     display: flex;
     justify-content: space-between;
     padding: 24px;
     background: #f9f9f9;
     border-top: 1px solid #ddd;
-    gap: 10px;
   }
 
   .wizard-buttons button {
@@ -480,68 +447,82 @@
   }
 
   // Cálculo final
-  function calcular() {
-    const f1 = new Date(document.getElementById('fecha_accidente').value);
-    const f2 = new Date(document.getElementById('fecha_rehabilitacion').value);
+// Cálculo final
+function calcular() {
+  const f1 = new Date(document.getElementById('fecha_accidente').value);
+  const f2 = new Date(document.getElementById('fecha_rehabilitacion').value);
 
-    if(f2 < f1) {
-      alert("❌ La fecha de rehabilitación no puede ser anterior a la fecha del accidente.");
-      changeStep(-1);
-      return;
-    }
+  if(f2 < f1) {
+    alert("❌ La fecha de rehabilitación no puede ser anterior a la fecha del accidente.");
+    changeStep(-1);
+    return;
+  }
 
-    const diasTotal = Math.max(0, Math.ceil((f2 - f1) / (1000 * 60 * 60 * 24))+1);
-    const diasHosp = parseInt(document.getElementById('dias_hospitalizado')?.value) || 0;
-    const diasBaja = parseInt(document.getElementById('dias_baja')?.value) || 0;
-    const diasTareas = parseInt(document.getElementById('dias_tareas')?.value) || 0;
+  const diasTotal = Math.max(0, Math.ceil((f2 - f1) / (1000 * 60 * 60 * 24))+1);
+  const diasHosp = parseInt(document.getElementById('dias_hospitalizado')?.value) || 0;
+  const diasBaja = parseInt(document.getElementById('dias_baja')?.value) || 0;
+  const diasTareas = parseInt(document.getElementById('dias_tareas')?.value) || 0;
 
-    if(diasHosp + diasBaja + diasTareas > diasTotal){
-      alert("❌ La suma de días de hospitalización, baja y tareas no puede superar el total de días entre accidente y rehabilitación.");
-      changeStep(1);
-      return;
-    }
+  if(diasHosp + diasBaja + diasTareas > diasTotal){
+    alert("❌ La suma de días de hospitalización, baja y tareas no puede superar el total de días entre accidente y rehabilitación.");
+    changeStep(1);
+    return;
+  }
 
-    const totalHosp = diasHosp * precioHosp ;
-    const totalBaja = diasBaja * precioBaja ;
-    const totalTareas = diasTareas * precioBaja ;
-    const diasModerados = diasHosp + diasBaja + diasTareas;
-    const diasLeves = Math.max(0, diasTotal - diasModerados);
-    const totalLeves = diasLeves * precioLeve;
-    const euro = v => v.toFixed(2) + " €";
-    let total = totalHosp + totalBaja + totalTareas + totalLeves;
+  const totalHosp = diasHosp * precioHosp ;
+  const totalBaja = diasBaja * precioBaja ;
+  const totalTareas = diasTareas * precioBaja ;
+  const diasModerados = diasHosp + diasBaja + diasTareas;
+  const diasLeves = Math.max(0, diasTotal - diasModerados);
+  const totalLeves = diasLeves * precioLeve;
+  const euro = v => v.toFixed(2) + " €";
+  let total = totalHosp + totalBaja + totalTareas + totalLeves;
 
-    let resultado = "";
+  let resultado = "";
 
-    if (puntosSecuelas >= 10) {
+  if (puntosSecuelas >= 10) {
+    resultado = `
+      <h2 style="color: darkred">⚠️ Atención: Secuelas graves detectadas</h2>
+      <p>Hemos identificado que tus secuelas podrían ser significativas, lo que indica una situación más compleja.</p>
+      <p><strong>Para confirmar y conocer el monto real de tu indemnización, es necesario realizar un cálculo personalizado.</strong></p>
+      <p style="font-size: 18px; margin-top: 10px;"><a href="https://defiendetuaccidente.es/contacto-2/#contacto" style="color: #0073aa; text-decoration: underline;">👉 Haz clic aquí para contactar con nuestro equipo especializado</a></p>
+       <!-- <div class="reload-buttons">  
+           <button type="button" onclick="reiniciarCalculadora()">🔄 Volver a calcular</button>
+        </div><br>-->
+      <p style="font-size: 12px; color: #666; margin-top: 30px;">
+        *Estimación orientativa basada en los datos introducidos. El resultado podría variar tras el estudio del caso por parte de uno de nuestros profesionales.
+      </p>
+    `;
+  } else {
+    const edad = parseInt(document.querySelector('input[name="age"]').value, 10);
+    const rangoEdad = obtenerRangoEdad(edad);
+    if (rangoEdad && indemnizaciones[rangoEdad]) {
+      const compensacionSecuelas = indemnizaciones[rangoEdad][puntosSecuelas - 1] || 0;
+      total += compensacionSecuelas;
       resultado = `
-        <h2 style="color: darkred">⚠️ Atención: Secuelas graves detectadas</h2>
-        <p>Hemos identificado que tus secuelas podrían ser significativas, lo que indica una situación más compleja.</p>
-        <p><strong>Para confirmar y conocer el monto real de tu indemnización, es necesario realizar un cálculo personalizado.</strong></p>
-        <p style="font-size: 18px; margin-top: 10px;"><a href="#" style="color: #0073aa; text-decoration: underline;">👉 Haz clic aquí para contactar con nuestro equipo especializado</a></p>
-        <p style="font-size: 12px; color: #666; margin-top: 30px;">
-          *Estimación orientativa basada en los datos introducidos. El resultado podría variar tras el estudio del caso por parte de uno de nuestros profesionales.
-        </p>
-      `;
-    } else {
-      const edad = parseInt(document.querySelector('input[name="age"]').value, 10);
-      const rangoEdad = obtenerRangoEdad(edad);
-      if (rangoEdad && indemnizaciones[rangoEdad]) {
-        const compensacionSecuelas = indemnizaciones[rangoEdad][puntosSecuelas - 1] || 0;
-        total += compensacionSecuelas;
-        resultado = `
+        <div style="text-align:center;">
           <h2 style="margin-bottom:0">Total estimado:</h2>
           <h1 style="margin-top:0">${euro(total)}</h1><br>     
+          <a href="https://defiendetuaccidente.es/contacto-2/#contacto" 
+             style="display:inline-block; background-color:#f97316; color:#fff; 
+                    padding:12px 28px; font-size:16px; 
+                    font-weight:600; text-decoration:none; transition:background 0.3s ease; margin-top:15px;">
+             Contactar
+          </a>
           <p style="font-size: 12px; color: #666; margin-top: 30px;">
-            *Estimación orientativa basada en los datos introducidos. El resultado podría variar tras el estudio del caso por parte de uno de nuestros profesionales
+            *Estimación orientativa basada en los datos introducidos. 
+            El resultado podría variar tras el estudio del caso por parte de uno de nuestros profesionales
           </p>
-        `;
-      } else {
-        resultado = `<p style="color: red">⚠️ Error: No se pudo calcular la compensación por secuelas. Asegúrate de haber seleccionado correctamente tu rango de edad.</p>`;
-      }
+        </div>
+      `;
+    } else {
+      resultado = `<p style="color: red">⚠️ Error: No se pudo calcular la compensación por secuelas. Asegúrate de haber seleccionado correctamente tu rango de edad.</p>`;
     }
-
-    document.getElementById('resultado').innerHTML = resultado;
   }
+
+  document.getElementById('resultado').innerHTML = resultado;
+}
+
   // Establecer fecha máxima del accidente como hoy
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('fecha_accidente').setAttribute('max', today);
