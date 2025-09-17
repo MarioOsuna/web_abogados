@@ -184,10 +184,10 @@
       <input type="number" name="age" min="1" max="99" required>
 
       <label>Fecha del accidente:</label>
-      <input type="date" id="fecha_accidente" required max="">
+      <input type="date" id="fecha_accidente" required max>
 
       <label>Fecha fin de rehabilitación:</label>
-      <input type="date" id="fecha_rehabilitacion" required max="">
+      <input type="date" id="fecha_rehabilitacion" required max>
     </div>
 
     <!-- Paso 2 -->
@@ -396,55 +396,132 @@
     validateStep();
   }
 
-  // Validación de cada paso
-  function validateStep() {
-    const current = steps[currentStep];
-    const inputs = current.querySelectorAll("input, select");
-    let isValid = true;
-
-    inputs.forEach(input => {
-      if (input.offsetParent === null) return;
-
-      if (input.hasAttribute("required") && !input.value) {
-        isValid = false;
-      }
-
-      if (input.type === "number") {
-        const val = parseInt(input.value);
-        if (isNaN(val) || val < 0) {
-          isValid = false;
-        }
-      }
-
-      if (input.type === "radio") {
-        const name = input.name;
-        const radios = current.querySelectorAll(`input[name="${name}"]`);
-        const algunoSeleccionado = Array.from(radios).some(r => r.checked);
-        if (!algunoSeleccionado) {
-          isValid = false;
-        }
-      }
-    });
-
-    // Validación adicional: fechas y días
-    const fechaAccidente = new Date(document.getElementById('fecha_accidente')?.value);
-    const fechaRehab = new Date(document.getElementById('fecha_rehabilitacion')?.value);
-    if (fechaAccidente && fechaRehab && fechaRehab < fechaAccidente) {
-      isValid = false;
-    }
-
-    const diasTotales = Math.max(0, Math.ceil((fechaRehab - fechaAccidente) / (1000 * 60 * 60 * 24)));
-    const diasHosp = parseInt(document.getElementById('dias_hospitalizado')?.value) || 0;
-    const diasBaja = parseInt(document.getElementById('dias_baja')?.value) || 0;
-    const diasTareas = parseInt(document.getElementById('dias_tareas')?.value) || 0;
-
-    if (diasHosp + diasBaja + diasTareas > diasTotales) {
-      isValid = false;
-    }
-
-    nextBtn.disabled = !isValid;
-    return isValid;
+  // --- HELPERS: comprobar fecha válida y obtener fecha ---
+  function isValidDate(d) {
+    return d instanceof Date && !isNaN(d.getTime());
   }
+
+  function getDateFromInput(id) {
+    const el = document.getElementById(id);
+    if (!el || !el.value) return null;
+    const d = new Date(el.value);
+    return isValidDate(d) ? d : null;
+  }
+
+  // --- Validación por paso (reemplaza tu validateStep actual) ---
+  // --- Validación por paso (reemplaza tu validateStep actual) ---
+function validateStep() {
+  const current = steps[currentStep];
+  const inputs = current.querySelectorAll("input, select");
+  let isValid = true;
+
+  // 1) Validación básica sólo para inputs visibles del paso actual
+  inputs.forEach(input => {
+    if (input.offsetParent === null) return; // está oculto, ignorar
+
+    // required (no radios aquí)
+    if (input.hasAttribute("required") && input.type !== "radio") {
+      if (!input.value) isValid = false;
+    }
+
+    // números: > = 0
+    if (input.type === "number") {
+      const val = parseInt(input.value, 10);
+      if (isNaN(val) || val < 0) isValid = false;
+    }
+  });
+
+  // 2) Validación de grupos de radio dentro del paso actual
+  const radios = current.querySelectorAll("input[type='radio']");
+  const radioNames = new Set();
+  radios.forEach(r => radioNames.add(r.name));
+  radioNames.forEach(name => {
+    const group = current.querySelectorAll(`input[name="${name}"]`);
+    const anyChecked = Array.from(group).some(r => r.checked);
+    const required = Array.from(group).some(r => r.hasAttribute('required'));
+    if (required && !anyChecked) isValid = false;
+  });
+
+  // 3) Validaciones específicas por paso
+  // Paso 0: fechas
+  if (currentStep === 0) {
+    const fechaAcc = getDateFromInput('fecha_accidente');
+    const fechaReh = getDateFromInput('fecha_rehabilitacion');
+
+    if (!fechaAcc || !fechaReh) {
+      isValid = false;
+    } else {
+      if (fechaReh < fechaAcc) isValid = false;
+
+      // accidente no en el futuro
+      const today = new Date();
+      today.setHours(0,0,0,0);
+      if (fechaAcc > today) isValid = false;
+    }
+  }
+
+  // Paso 1: coherencia de días y validación de tareas
+  if (currentStep === 1) {
+    const fechaAcc = getDateFromInput('fecha_accidente');
+    const fechaReh = getDateFromInput('fecha_rehabilitacion');
+
+    if (!fechaAcc || !fechaReh) {
+      isValid = false;
+    } else {
+      const msPerDay = 1000 * 60 * 60 * 24;
+      const diasTotales = Math.max(0, Math.ceil((fechaReh - fechaAcc) / msPerDay) + 1);
+
+      const diasHosp = parseInt(document.getElementById('dias_hospitalizado')?.value || 0, 10);
+      const diasBaja = parseInt(document.getElementById('dias_baja')?.value || 0, 10);
+      const diasTareas = parseInt(document.getElementById('dias_tareas')?.value || 0, 10);
+
+      if ((diasHosp + diasBaja + diasTareas) > diasTotales) isValid = false;
+
+      // ✅ Validar "tareas" solo si la pregunta está visible
+      const preguntaTareas = document.getElementById('pregunta_tareas');
+      if (preguntaTareas && !preguntaTareas.classList.contains('oculto')) {
+        const radiosTareas = document.querySelectorAll('input[name="tareas"]');
+        const anyChecked = Array.from(radiosTareas).some(r => r.checked);
+        if (!anyChecked) isValid = false;
+
+        // Si contestó "sí", validar que los días sean > 0
+        const seleccionado = Array.from(radiosTareas).find(r => r.checked);
+        if (seleccionado && seleccionado.value === "si") {
+          if (diasTareas <= 0) isValid = false;
+        }
+      }
+    }
+  }
+
+  nextBtn.disabled = !isValid;
+  return isValid;
+}
+
+  // --- Listeners extra: que validen en cuanto cambien fechas/días ---
+  const idsToWatch = ['fecha_accidente', 'fecha_rehabilitacion', 'dias_hospitalizado', 'dias_baja', 'dias_tareas'];
+  idsToWatch.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('input', validateStep);
+      el.addEventListener('change', validateStep);
+    }
+  });
+
+  // Si quieres: fijar min/restricciones dinámicas en rehabilitacion cuando se elige accidente
+  const fechaAccEl = document.getElementById('fecha_accidente');
+  const fechaRehEl = document.getElementById('fecha_rehabilitacion');
+  if (fechaAccEl && fechaRehEl) {
+    const todayStr = new Date().toISOString().split('T')[0];
+    fechaAccEl.setAttribute('max', todayStr);
+    fechaRehEl.setAttribute('max', todayStr);
+
+    fechaAccEl.addEventListener('change', () => {
+      if (fechaAccEl.value) fechaRehEl.setAttribute('min', fechaAccEl.value);
+      else fechaRehEl.removeAttribute('min');
+      validateStep();
+    });
+  }
+
 
   // Cálculo final
 // Cálculo final
