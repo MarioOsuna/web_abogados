@@ -1,338 +1,258 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Información pública de interés general</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Información pública de interés general</title>
 
-<style>
-  * {
-    box-sizing: border-box;
-  }
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-  body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-    background: #ffffff;
-    color: #111;
-    line-height: 1.6;
-    overflow-x: hidden;
-  }
-
-  /* ===== SECCIÓN INTRO FIJA (100% viewport) ===== */
-  .intro {
-    min-height: 100vh; /* Ocupa toda la pantalla inicial */
-    padding: 10px 5%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    position: relative;
-    opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.8s ease, transform 0.8s ease;
-  }
-
-  .intro.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* ===== SECCIONES DE CONTENIDO ===== */
-  .content-section {
-    padding: 70px 8%;
-    opacity: 0;
-    transform: translateY(25px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-    text-align: center;
-    max-width: 1000px;
-    margin: 0 auto;
-  }
-
-  .content-section.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  h1 {
-    font-size: clamp(1.8rem, 5vw, 3rem); /* Tamaño responsivo */
-    margin-bottom: 25px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    line-height: 1.3;
-  }
-
-  .intro p {
-    font-size: clamp(1.1rem, 3vw, 1.8rem);
-    margin-bottom: 0;
-    font-weight: 500;
-    color: #333;
-    max-width: 800px;
-    margin-top: 20px;
-  }
-
-  h2 {
-    font-size: clamp(1.3rem, 4vw, 2rem);
-    margin-bottom: 20px;
-    color: #222;
-    line-height: 1.3;
-  }
-
-  .content-section p {
-    font-size: clamp(1rem, 2.5vw, 1.2rem);
-    max-width: 800px;
-    margin: 0 auto 15px;
-    text-align: center;
-    line-height: 1.7;
-  }
-
-  /* ===== FOOTER ===== */
-  footer {
-    padding: 70px 8%;
-    background: #fafafa;
-    text-align: center;
-    max-width: 1000px;
-    margin: 0 auto;
-  }
-
-  footer h2 {
-    margin-bottom: 35px;
-    font-size: clamp(1.3rem, 4vw, 1.8rem);
-  }
-
-  footer a {
-    display: block;
-    margin: 20px 0;
-    font-size: clamp(0.95rem, 2.5vw, 1.1rem);
-    color: #000;
-    text-decoration: none;
-    transition: opacity 0.3s;
-    padding: 15px;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    background: white;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  }
-
-  footer a:hover {
-    opacity: 0.6;
-    background: #f9f9f9;
-  }
-
-  #countdown {
-    margin-top: 45px;
-    font-size: clamp(1rem, 2.5vw, 1.2rem);
-    font-weight: bold;
-    padding: 15px;
-    background: #fff;
-    border-radius: 8px;
-    border: 1px solid #eee;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  }
-
-  /* ===== TABLET (768px - 1024px) ===== */
-  @media (max-width: 1024px) {
-    .intro {
-      padding: 10px 6%;
-    }
-    
-    .content-section {
-      padding: 60px 6%;
-    }
-    
-    footer {
-      padding: 60px 6%;
-    }
-    
-    .content-section p {
-      text-align: center;
-    }
-  }
-
-  /* ===== MÓVIL (hasta 767px) ===== */
-  @media (max-width: 767px) {
-    .intro {
-      padding: 10px 5%;
-      min-height: 100vh;
-    }
-    
-    .content-section {
-      padding: 50px 5%;
-      text-align: left; /* En móvil, texto alineado a la izquierda para mejor lectura */
-    }
-    
-    footer {
-      padding: 50px 5%;
-    }
-    
-    h1 {
-      margin-bottom: 20px;
-    }
-    
-    .intro p {
-      margin-top: 15px;
-    }
-    
-    h2 {
-      text-align: center;
-      margin-bottom: 15px;
-    }
-    
-    .content-section p {
-      text-align: left; /* En móvil, texto alineado a la izquierda */
-      margin-bottom: 12px;
-    }
-    
-    footer a {
-      margin: 15px 0;
-      padding: 12px;
-      text-align: center;
-    }
-  }
-
-  /* ===== MÓVIL PEQUEÑO (hasta 480px) ===== */
-  @media (max-width: 480px) {
-    .intro {
-      padding: 10px;
-    }
-    
-    .content-section {
-      padding: 40px 15px;
-    }
-    
-    footer {
-      padding: 40px 15px;
-    }
-    
-    h1 {
-      font-size: 1.6rem;
-      margin-bottom: 15px;
-    }
-    
-    .intro p {
-      font-size: 1.2rem;
-      margin-top: 10px;
-    }
-    
-    h2 {
-      font-size: 1.4rem;
-    }
-    
-    .content-section p {
-      font-size: 1rem;
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background: #ffffff;
+      color: #111;
       line-height: 1.6;
+      overflow-x: hidden;
     }
-    
+
+    /* ===== INTRO ===== */
+    .intro {
+      padding: 80px 8% 40px;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .intro.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ===== CONTENIDO ===== */
+    .content-section {
+      padding: 25px 8%;
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .content-section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    h1 {
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    h2 {
+      font-size: clamp(1.3rem, 4vw, 1.7rem);
+      margin-bottom: 8px;
+    }
+
+    .content-section p {
+      font-size: clamp(1rem, 2.5vw, 1.15rem);
+      max-width: 800px;
+      margin: 0 auto 10px;
+    }
+
+    /* ===== FOOTER GRIS A LO ANCHO ===== */
+    footer {
+      width: 100%;
+      background: #ededed;
+      margin-top: 60px;
+      padding: 50px 8%;
+    }
+
+    footer .footer-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    footer h2 {
+      font-size: clamp(1.2rem, 4vw, 1.5rem);
+      margin-bottom: 30px;
+      font-weight: 600;
+      color: #222;
+    }
+
+    /* ===== BOTONES ===== */
+    footer .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
     footer a {
-      font-size: 0.95rem;
-      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 18px;
+      background: #f9f9f9;
+      border: 1px solid #cfcfcf;
+      border-radius: 4px;
+      text-decoration: none;
+      color: #003366;
+      font-weight: 600;
+      transition: background 0.2s ease, border-color 0.2s ease;
     }
-    
-    #countdown {
-      font-size: 1rem;
-      padding: 12px;
-    }
-  }
 
-  /* Indicador visual para scroll (opcional) */
-  .scroll-indicator {
-    position: absolute;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 0.9rem;
-    color: #666;
-    opacity: 0.8;
-    animation: bounce 2s infinite;
-  }
+    footer a .text {
+      text-align: left;
+    }
 
-  @keyframes bounce {
-    0%, 20%, 50%, 80%, 100% {
-      transform: translateX(-50%) translateY(0);
+    footer a .arrow {
+      font-size: 1.3rem;
+      color: #003366;
+      margin-left: 15px;
+      flex-shrink: 0;
     }
-    40% {
-      transform: translateX(-50%) translateY(-10px);
+
+    footer a:hover {
+      background: #ffffff;
+      border-color: #003366;
     }
-    60% {
-      transform: translateX(-50%) translateY(-5px);
+
+    footer a:focus-visible {
+      outline: 3px solid #99b3cc;
+      outline-offset: 3px;
     }
-  }
-</style>
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 767px) {
+      .content-section {
+        text-align: left;
+      }
+
+      footer {
+        padding: 40px 6%;
+      }
+
+      footer .footer-inner {
+        text-align: left;
+      }
+    }
+
+    /* ===== SCROLL INDICATOR ===== */
+    .scroll-indicator {
+      margin-top: 20px;
+      font-size: 0.85rem;
+      color: #666;
+      opacity: 0.7;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-8px); }
+      60% { transform: translateY(-4px); }
+    }
+  </style>
 </head>
 
 <body>
 
-<section class="intro">
-  <h1>5 razones para contratar a un abogado que defienda tu accidente</h1>
-  <div class="scroll-indicator">Desplázate hacia abajo</div>
-</section>
+  <section class="intro">
+    <h1>5 razones para contratar a un abogado que defienda tu accidente</h1>
+    <div class="scroll-indicator">Desplázate hacia abajo</div>
+  </section>
 
-<section class="content-section">
-  <h2>1. Por cercanía personal</h2>
-  <p>
-    Tu abogado defenderá tus derechos y te guiará en tu recuperación lesional.
-  </p>
-</section>
+  <section class="content-section">
+    <h2>1. Por cercanía personal</h2>
+      <p>
+        Tu abogado defenderá tus derechos y te guiará en tu recuperación
+        lesional.
+      </p>
+  </section>
 
-<section class="content-section">
-  <h2>2. Por independencia de las aseguradoras</h2>
-  <p>
-    Tu abogado será independiente de las aseguradoras, solo rendirá cuentas ante ti con el único fin de defender tu accidente.
-  </p>
-</section>
+  <section class="content-section">
+    <h2>2. Por independencia de las aseguradoras</h2>
+      <p>
+        Tu abogado será independiente de las aseguradoras, solo rendirá cuentas
+        ante ti con el único fin de defender tu accidente.
+      </p>
+  </section>
 
-<section class="content-section">
-  <h2>3. Porque no te supondrá un coste añadido</h2>
-  <p>
-    Que no te engañen nunca, el coste de tu abogado estará cubierto por tu seguro.
-  </p>
-</section>
+  <section class="content-section">
+    <h2>3. Porque no te supondrá un coste añadido</h2>
+      <p>
+        Que no te engañen nunca, el coste de tu abogado estará cubierto por tu
+        seguro.
+      </p>
+  </section>
 
-<section class="content-section">
-  <h2>4. Por agilidad en el procedimiento</h2>
-  <p>
-   Tu abogado reclamará tus derechos desde el primer día, sin dilaciones.
-  </p>
-</section>
+  <section class="content-section">
+    <h2>4. Por agilidad en el procedimiento</h2>
+      <p>
+        Tu abogado reclamará tus derechos desde el primer día, sin dilaciones.
+      </p>
+  </section>
 
-<section class="content-section">
-  <h2>5. Para obtener la máxima indemnización</h2>
-  <p>
-    Tu abogado te asesorará desde el inicio, defenderá tus periodos de baja, usará peritos médicos y hará el cálculo correcto para obtener tu máxima indemnización.
-  </p>
-  <p>
-    Sin acuerdos injustos y sin engaños.
-  </p>
-</section>
+  <section class="content-section">
+    <h2>5. Para obtener la máxima indemnización</h2>
+      <p>
+        Tu abogado te asesorará desde el inicio, defenderá tus periodos de baja,
+        usará peritos médicos y hará el cálculo correcto para obtener tu máxima
+        indemnización.
+      </p>
+      <b>
+        Sin acuerdos injustos y sin engaños.
+      </b>
+  </section>
 
-<footer id="final">
-  <h2>Para contratar a un abogado te recomendamos las siguientes vías</h2>
+  <footer id="final">
+    <div class="footer-inner">
+      <h2>Para contratar a un abogado te recomendamos las siguientes vías</h2>
 
-  <a href="https://www.google.com/search?q=diez+mejores+abogados+de+accidentes+de+tr%C3%A1fico+en+c%C3%B3rdoba&oq=diez+mejores+abogados+de+accidentes+de+tr%C3%A1fico+en+c%C3%B3rdoba&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIHCAEQIRigATIHCAIQIRigATIHCAMQIRigAdIBCjEyMjQyajBqMTWoAgiwAgHxBVHFItJ-2zLP&sourceid=chrome&ie=UTF-8">Consulta los diez mejores abogados de accidentes de tráfico de Córdoba</a>
-  <a href="https://www.icacordoba.com">Pide un abogado especialista en el Colegio de Abogados de Córdoba</a>
-  <a href="https://defiendetuaccidente.es/">Visita Sumalex Abogados, despacho especialista en accidentes de tráfico en Córdoba</a>
+      <div class="footer-links">
+        <a href="https://www.google.com/search?q=abogados+accidentes+tr%C3%A1fico+c%C3%B3rdoba">
+          <span class="text">Consulta los diez mejores abogados de accidentes de tráfico de Córdoba</span>
+          <span class="arrow">→</span>
+        </a>
 
-   <!-- <div id="countdown"></div> -->
-</footer>
+        <a href="https://www.icacordoba.com">
+          <span class="text">Pide un abogado especialista en el
+        Colegio de Abogados de Córdoba</span>
+          <span class="arrow">→</span>
+        </a>
 
-<script>
-  const sections = document.querySelectorAll('.intro, .content-section');
+        <a href="https://defiendetuaccidente.es/">
+          <span class="text">También puedes ampliar información visitando Sumalex Abogados, despacho de abogados especialista en accidentes de tráfico en Córdoba.</span>
+          <span class="arrow">→</span>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const sections = document.querySelectorAll('.intro, .content-section');
   const finalSection = document.getElementById('final');
   // const countdownEl = document.getElementById('countdown');
 
   let reachedBottom = false;
   let countdownStarted = false;
 
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-      }
-    });
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
   }, { threshold: 0.15 }); // Umbral más bajo para mejor detección en móviles
 
-  sections.forEach(section => observer.observe(section));
+    sections.forEach(section => observer.observe(section));
 
   // Observador específico para la sección intro
   const introObserver = new IntersectionObserver(entries => {
@@ -379,10 +299,10 @@
   }
 
   // Asegurar que la sección intro sea visible al cargar
-  window.addEventListener('load', () => {
-    document.querySelector('.intro').classList.add('visible');
-  });
-</script>
+    window.addEventListener('load', () => {
+      document.querySelector('.intro').classList.add('visible');
+    });
+  </script>
 
 </body>
 </html>
