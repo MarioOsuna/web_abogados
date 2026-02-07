@@ -67,7 +67,20 @@
       margin: 0 auto 10px;
     }
 
-    /* ===== FOOTER GRIS A LO ANCHO ===== */
+    /* ===== TEXTO MÁS GRANDE EN ORDENADOR ===== */
+    @media (min-width: 1024px) {
+      .content-section h2 {
+        font-size: 2.8rem;
+      }
+
+      .content-section p,
+      .content-section b,
+      .content-section u {
+        font-size: 1.7rem;
+      }
+    }
+
+    /* ===== FOOTER ===== */
     footer {
       width: 100%;
       background: #ededed;
@@ -88,7 +101,6 @@
       color: #222;
     }
 
-    /* ===== BOTONES ===== */
     footer .footer-links {
       display: flex;
       flex-direction: column;
@@ -99,6 +111,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 15px;
       padding: 16px 18px;
       background: #f9f9f9;
       border: 1px solid #cfcfcf;
@@ -111,12 +124,11 @@
 
     footer a .text {
       text-align: left;
+      flex: 1;
     }
 
     footer a .arrow {
       font-size: 1.3rem;
-      color: #003366;
-      margin-left: 15px;
       flex-shrink: 0;
     }
 
@@ -130,10 +142,22 @@
       outline-offset: 3px;
     }
 
-    /* ===== RESPONSIVE ===== */
+    /* ===== BOTÓN DESTACADO CON IMAGEN ===== */
+    footer a.destacado {
+      background: #ffffff;
+      border-color: #003366;
+    }
+
+    footer a.destacado img {
+      width: 100px;
+      height: auto;
+      flex-shrink: 0;
+    }
+
+    /* ===== MÓVIL: TODO CENTRADO ===== */
     @media (max-width: 767px) {
       .content-section {
-        text-align: left;
+        text-align: center;
       }
 
       footer {
@@ -141,7 +165,16 @@
       }
 
       footer .footer-inner {
-        text-align: left;
+        text-align: center;
+      }
+
+      footer a {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      footer a .text {
+        text-align: center;
       }
     }
 
@@ -171,45 +204,29 @@
 
   <section class="content-section">
     <h2>1. Por cercanía personal</h2>
-      <p>
-        Tu abogado defenderá tus derechos y te guiará en tu recuperación
-        lesional.
-      </p>
+    <p>Tu abogado defenderá tus derechos y te guiará en tu recuperación lesional.</p>
   </section>
 
   <section class="content-section">
-    <h2>2. Por independencia de las aseguradoras</h2>
-      <p>
-        Tu abogado será independiente de las aseguradoras, solo rendirá cuentas
-        ante ti con el único fin de defender tu accidente.
-      </p>
+    <h2>2. Por independencia</h2>
+    <p>Tu abogado será independiente de las aseguradoras.</p>
+    <u>Solo rendirá cuentas ante ti.</u>
   </section>
 
   <section class="content-section">
     <h2>3. Porque no te supondrá un coste añadido</h2>
-      <p>
-        Que no te engañen nunca, el coste de tu abogado estará cubierto por tu
-        seguro.
-      </p>
+    <p>Que no te engañen, su coste está cubierto por tu seguro.</p>
   </section>
 
   <section class="content-section">
     <h2>4. Por agilidad en el procedimiento</h2>
-      <p>
-        Tu abogado reclamará tus derechos desde el primer día, sin dilaciones.
-      </p>
+    <p>Tus derechos se reclamarán desde el primer día.</p>
+    <u>Sin dilaciones.</u>
   </section>
 
   <section class="content-section">
-    <h2>5. Para obtener la máxima indemnización</h2>
-      <p>
-        Tu abogado te asesorará desde el inicio, defenderá tus periodos de baja,
-        usará peritos médicos y hará el cálculo correcto para obtener tu máxima
-        indemnización.
-      </p>
-      <b>
-        Sin acuerdos injustos y sin engaños.
-      </b>
+    <h2>5. Y todo ello para obtener la máxima indemnización.</h2>
+    <b>Sin imposiciones, acuerdos injustos ni engaños.</b>
   </section>
 
   <footer id="final">
@@ -223,13 +240,13 @@
         </a>
 
         <a href="https://www.icacordoba.com">
-          <span class="text">Pide un abogado especialista en el
-        Colegio de Abogados de Córdoba</span>
+          <span class="text">Pide un abogado especialista en el Colegio de Abogados de Córdoba</span>
           <span class="arrow">→</span>
         </a>
 
-        <a href="https://defiendetuaccidente.es/">
-          <span class="text">También puedes ampliar información visitando Sumalex Abogados, despacho de abogados especialista en accidentes de tráfico en Córdoba.</span>
+        <a class="destacado" href="https://defiendetuaccidente.es/">
+          <span class="text">También puedes ampliar información visitando Sumalex Abogados, despacho especialista en accidentes de tráfico en Córdoba.</span>
+          <img src="logo-divorcio.png" alt="Sumalex Abogados">
           <span class="arrow">→</span>
         </a>
       </div>
@@ -270,7 +287,7 @@
     if (!reachedBottom) {
       finalSection.scrollIntoView({ behavior: 'smooth' });
     }
-  }, 40000);
+  }, 30000);
 
   window.addEventListener('scroll', () => {
     const rect = finalSection.getBoundingClientRect();
